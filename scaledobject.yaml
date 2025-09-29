@@ -1,0 +1,38 @@
+# KEDA ScaledObject (cron pre-warm + CPU)
+apiVersion: keda.sh/v1alpha1
+kind: ScaledObject
+metadata:
+  name: myflask-scaledobject
+  namespace: keda-demo
+spec:
+  scaleTargetRef:
+    name: myflask
+  minReplicaCount: 3
+  maxReplicaCount: 50
+  advanced:
+    horizontalPodAutoscalerConfig:
+      behavior:
+        scaleDown:
+          stabilizationWindowSeconds: 100   # optional: hold for 30m after spikes
+          policies:
+          - type: Percent
+            value: 20
+            periodSeconds: 30
+        scaleUp:
+          stabilizationWindowSeconds: 0
+          policies:
+          - type: Percent
+            value: 100
+            periodSeconds: 30
+          selectPolicy: Max
+  triggers:
+  - type: cron
+    metadata:
+      timezone: America/New_York
+      start: "13 11 * * *"   # 8:00 AM Mon–Fri → pre-warm
+      end:   "17 11 * * *"   # 9:00 AM Mon–Fri
+      desiredReplicas: "30"
+  - type: cpu
+    metadata:
+      type: Utilization
+      value: "50"

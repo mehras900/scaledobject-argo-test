@@ -1,0 +1,41 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: myflask
+  namespace: keda-demo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: myflask
+  template:
+    metadata:
+      labels:
+        app: myflask
+    spec:
+      containers:
+      - name: myflask
+        image: myflask_minikube:v1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 5334
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5334 
+          initialDelaySeconds: 3
+          periodSeconds: 5
+        livenessProbe:
+          httpGet: 
+            path: /health 
+            port: 5334 
+          initialDelaySeconds: 10
+          periodSeconds: 10
+        resources:
+          requests:
+            cpu: "100m"
+            memory: "128Mi"
+          limits:
+            cpu: "5000m"
+            memory: "512Mi"
+
