@@ -2,11 +2,11 @@
 apiVersion: keda.sh/v1alpha1
 kind: ScaledObject
 metadata:
-  name: myflask-scaledobject
+  name: nginx-scaledobject
   namespace: keda-demo
 spec:
   scaleTargetRef:
-    name: myflask
+    name: nginx
   minReplicaCount: 3
   maxReplicaCount: 50
   advanced:

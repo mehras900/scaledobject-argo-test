@@ -1,41 +1,29 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: myflask
+  name: nginx
   namespace: keda-demo
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: myflask
+      app: nginx
   template:
     metadata:
       labels:
-        app: myflask
+        app: nginx
     spec:
       containers:
-      - name: myflask
-        image: myflask_minikube:v1
+      - name: nginx
+        image: nginx:1.29.1-alpine-slim
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 5334
-        readinessProbe:
-          httpGet:
-            path: /health
-            port: 5334 
-          initialDelaySeconds: 3
-          periodSeconds: 5
-        livenessProbe:
-          httpGet: 
-            path: /health 
-            port: 5334 
-          initialDelaySeconds: 10
-          periodSeconds: 10
+        - containerPort: 8080
         resources:
           requests:
             cpu: "100m"
             memory: "128Mi"
           limits:
-            cpu: "5000m"
+            cpu: "500m"
             memory: "512Mi"
 
